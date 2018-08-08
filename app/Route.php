@@ -22,7 +22,6 @@ class Route
 		if(file_exists(dirname(__DIR__).'/app/controller/'.ucfirst($url[0]).'Controller.php')) {
             $this->controller = ucfirst($url[0]).'Controller';
             unset($url[0]);
-            echo 'exist';
 		}
 		else{
 			include_once('view/404.php');

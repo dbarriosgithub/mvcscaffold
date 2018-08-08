@@ -3,16 +3,26 @@
 
         public function index()
     	{
-    		/*require_once '../view/header.php';
-    		require_once '../view/viewclient.php';
-    		require_once '../view/footer.php';*/
+            $client = new Client();
 
-            echo '<h1>si funciona</h1>';
+            View::set('name','Clients List');
+            View::set('clients', $client->all());
+            View::render('client/index');
     	}
 
     	public function create()
     	{
-    		echo '<h1>si funciona create</h1>';
+            if(isset($_POST))
+            {
+              $client = new Client();
+              $client->set($_POST);
+              View::set('message', $client->message);
+            } 
+
+    		View::set('name','Client register');
+            View::set('namebutton','Registrar');
+            View::set('action','/client/create');
+            View::render('client/create');
     	}
         
     	public function store()
@@ -24,14 +34,34 @@
     	{
     		# code...
     	}
-    	public function edit()
+    	public function edit($id)
     	{
-    		# code...
+    	   $client = new Client();
+           $client->get('id',$id);
+           View::set('client',$client);
+           View::set('name','Client register');
+           View::set('namebutton','Editar');
+           View::set('action',"/client/update/$id");
+           View::render('client/create');
     	}
    
-    	public function update()
+    	public function update($id)
     	{
-    		# code...
+    	   $client = new Client();
+           $client->edit('id',$id,$_POST);
+           View::set('message', $client->message);
+           View::set('name','Clients List');
+           View::set('clients', $client->all());
+           View::render('client/index');
     	}
+
+        public function delete($id)
+        {
+           $client = new Client();
+           $client->delete('id',$id);
+           View::set('message',$client->message);
+           View::set('clients', $client->all());
+           View::render('client/index');
+        }
  }
  ?>

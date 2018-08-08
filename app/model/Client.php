@@ -11,17 +11,27 @@ class Client extends Model
 	public $secondname;
 	public $address;
 	public $phone;
+	public $country_id;
+	public $country;
 	
 	function __construct()
 	{
-	  $insert = array('id'=>3,
-	  	           'name'=>'MArio',
-	  	           'secondname'=>'Perez',
-	  	           'address'=>'la floresta',
-	  	           'phone'=>'321345628');
+	  $this->country =  new Country();
+	}
 
-	  //$this->edit('phone','321345627',$insert);
-      $this->delete('phone','321345628');
+
+	public function country()
+	{
+         return $this->country->get('id',$this->country_id);
+	}
+
+	public function all()
+	{
+      $this->fields=[];
+      $this->query = 'select * from clients';
+      $this->get_results_query();
+
+      return $this->rows;
 	}
 
 	public function get($field='',$value=''){
@@ -29,11 +39,14 @@ class Client extends Model
 		$this->query = "select * from clients where $field=?";
 		$this->get_results_query();
 
-		if(count($this->rows)==1){
+		 if(count($this->rows)==1)
+		 {
+		 	$this->rows = $this->rows[0];
+
 			foreach ($this->rows as $attr => $value) {
 				$this->$attr = $value ; 
 			}
-		}
+		 }
 	}
 
 	public function set($client_array = array()){
@@ -47,17 +60,23 @@ class Client extends Model
              	array_push($this->fields,$value);
              }
              $this->query = "INSERT INTO clients 
-                             (id,name,secondname,address,phone)
+                             (name,secondname,address,phone,country_id)
                              VALUES
                              (?,?,?,?,?)";
-             $this->single_query();                
+             $this->single_query(); 
+
+             $this->message = 'Este registro se ingresó satisfactoriamente';           
+		  }
+		  else
+		  {
+		  	$this->message = 'Este registro ya existe';
 		  }	
 		}
 	}
 
 	public function edit($field='',$val='',$client_array = array()){
          $this->query ="UPDATE clients
-                        SET id=?,name=?,secondname=?,address=?,phone=? 
+                        SET name=?,secondname=?,address=?,phone=?,country_id =? 
                         WHERE $field = ?"; 
 
          $this->fields = array();
@@ -67,14 +86,16 @@ class Client extends Model
          }                
          
          array_push($this->fields,$val);
-         $this->single_query();              
+         $this->single_query(); 
+         $this->message ="El registro $val se editó correctamente";             
 
 	}
 
 	public function delete($field='',$val=''){
         $this->query ="DELETE FROM clients WHERE $field=?";
         $this->fields = array($val);
-        $this->single_query();        
+        $this->single_query(); 
+        $this->message ="El registro $val se eliminó correctamente";       
 	}
 
 }

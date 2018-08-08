@@ -13,7 +13,7 @@ class HomeController
 	    public function index()
 	 	{
 	 		View::set('name','Client Register');
-	 		View::render('listclient');
+	 		View::render('client/create');
 	 	}
 	
 	 	public function create()
